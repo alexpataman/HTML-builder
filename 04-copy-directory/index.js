@@ -4,6 +4,7 @@ const copyPostfix = '-copy'
 const inputDirName = 'files'
 
 async function copyDir(inputDirPath, outputDirPath) {
+    await fs.promises.rm(outputDirPath, { recursive: true })
     await fs.promises.mkdir(outputDirPath, { recursive: true })
     const files = await fs.promises.readdir(inputDirPath)
     for (const file of files) {
