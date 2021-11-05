@@ -22,7 +22,7 @@ async function createBundle() {
 
   for (const file of files) {
     if (path.extname(file) !== '.css') continue;
-    data += await getFileData(path.resolve(stylesPath, file));
+    data += (await getFileData(path.resolve(stylesPath, file))) + '\n';
   }
 
   const outputStream = fs.createWriteStream(outputPath);
