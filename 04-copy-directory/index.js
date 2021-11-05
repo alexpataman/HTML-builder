@@ -8,10 +8,19 @@ async function copyDir(inputDirPath, outputDirPath) {
   await fs.promises.mkdir(outputDirPath, { recursive: true });
   const files = await fs.promises.readdir(inputDirPath);
   for (const file of files) {
-    fs.promises.copyFile(
-      path.join(inputDirPath, file),
-      path.join(outputDirPath, file)
-    );
+    fs.stat(path.resolve(inputDirPath, file), (err, stats) => {
+      if (!stats.isDirectory()) {
+        fs.promises.copyFile(
+          path.join(inputDirPath, file),
+          path.join(outputDirPath, file)
+        );
+      } else {
+        copyDir(
+          path.resolve(inputDirPath, file),
+          path.resolve(outputDirPath, file)
+        );
+      }
+    });
   }
 }
 

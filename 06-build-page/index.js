@@ -17,16 +17,20 @@ async function createOutputDir() {
 }
 
 async function createStylesBundle() {
+  const stylesPath = path.resolve(__dirname, stylesInputDir);
+  const files = await fs.promises.readdir(stylesPath);
+  let data = '';
+
+  for (const file of files) {
+    if (path.extname(file) !== '.css') continue;
+    data += await getFileData(path.resolve(stylesPath, file));
+  }
+
   const outputStream = fs.createWriteStream(
     path.resolve(__dirname, outputDir, outputCssFile)
   );
-  const stylesPath = path.resolve(__dirname, stylesInputDir);
-  const files = await fs.promises.readdir(stylesPath);
-  for (const file of files) {
-    if (path.extname(file) !== '.css') continue;
-    let stream = fs.createReadStream(path.resolve(stylesPath, file));
-    stream.pipe(outputStream);
-  }
+  outputStream.write(data);
+  outputStream.end();
 }
 
 async function getFileData(file) {
@@ -77,6 +81,7 @@ async function generateHtml() {
 async function copyDir(inputDirPath, outputDirPath) {
   await fs.promises.rm(outputDirPath, { recursive: true, force: true });
   await fs.promises.mkdir(outputDirPath, { recursive: true });
+
   const files = await fs.promises.readdir(inputDirPath);
   for (const file of files) {
     fs.stat(path.resolve(inputDirPath, file), (err, stats) => {

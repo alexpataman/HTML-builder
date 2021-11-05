@@ -6,14 +6,28 @@ const outputPath = path.resolve(__dirname, outputDir, outputFile);
 const stylesDir = 'styles';
 const stylesPath = path.resolve(__dirname, stylesDir);
 
+async function getFileData(file) {
+  let stream = fs.createReadStream(file);
+  stream.setEncoding('utf8');
+  let data = '';
+  for await (const chunk of stream) {
+    data += chunk;
+  }
+  return data;
+}
+
 async function createBundle() {
-  const outputStream = fs.createWriteStream(outputPath);
   const files = await fs.promises.readdir(stylesPath);
+  let data = '';
+
   for (const file of files) {
     if (path.extname(file) !== '.css') continue;
-    let stream = fs.createReadStream(path.resolve(stylesPath, file));
-    stream.pipe(outputStream);
+    data += await getFileData(path.resolve(stylesPath, file));
   }
+
+  const outputStream = fs.createWriteStream(outputPath);
+  outputStream.write(data);
+  outputStream.end();
 }
 
 createBundle();
