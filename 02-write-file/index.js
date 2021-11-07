@@ -3,7 +3,7 @@ const fs = require('fs');
 const os = require('os');
 const { stdin, stdout } = process;
 
-const fileName = 'input.data.txt';
+const fileName = 'input.txt';
 const filePath = path.resolve(__dirname, fileName);
 
 fs.writeFile(filePath, '', () => {

@@ -68,7 +68,7 @@ async function generateHtml() {
       );
       let html = chunk.toString();
       results.forEach((result) => {
-        html = html.replaceAll(result.placeholder, result.html);
+        html = html.replace(result.placeholder, result.html);
       });
       this.push(html);
     },

@@ -108,4 +108,4 @@ bundle.*
 project-dist
 files-copy
 
-*.data.txt
+input.txt
