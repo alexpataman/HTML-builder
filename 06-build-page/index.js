@@ -49,11 +49,11 @@ async function generateHtml() {
   );
   let stream = fs.createReadStream(path.resolve(__dirname, templateFile));
   const TransformTemplate = new Transform({
-    transform(chunk) {
+    async transform(chunk) {
       const regexp = /{{(.*)}}/g;
       const replacement = [...chunk.toString().matchAll(regexp)];
 
-      Promise.allSettled(
+      const results = await Promise.all(
         replacement.reduce((acc, el) => {
           acc.push(
             (async (el) => {
@@ -65,13 +65,12 @@ async function generateHtml() {
           );
           return acc;
         }, [])
-      ).then((results) => {
-        let html = chunk.toString();
-        results.forEach((result) => {
-          html = html.replaceAll(result.value.placeholder, result.value.html);
-        });
-        this.push(html);
+      );
+      let html = chunk.toString();
+      results.forEach((result) => {
+        html = html.replaceAll(result.placeholder, result.html);
       });
+      this.push(html);
     },
   });
 
